@@ -1,4 +1,6 @@
+import { Container } from "@nextui-org/react";
 import Head from "next/head"
+import { AppBar } from "../ui";
 
 type Props = {
     children: React.ReactNode;
@@ -15,9 +17,13 @@ export const Layout= ({ children, title }: Props) => {
             <meta name="keywords" content={`${title}, pokemon, pokedex`} />
         </Head>
 
-        <main>
-            {children}
-        </main>
+        <AppBar/>
+        <Container lg>
+          <main>
+              {children}
+          </main>
+
+        </Container>
     </>
   )
 }
