@@ -1,21 +1,26 @@
 import type { NextPage, GetStaticProps } from 'next'
-import { Button } from '@nextui-org/react';
 import { Layout } from '../components/layouts';
+import { pokeApi } from '../api';
+import { PokemonListResponse, SmallPokemon } from '../interfaces';
+import { useId } from 'react';
 
-const Home: NextPage = (props) => {
+interface Props {
+  pokemons: SmallPokemon[];
+}
 
-  console.log({props});
+const Home: NextPage<Props> = ({ pokemons }) => {
+
+  const id = useId();
+
+  console.log(pokemons[0]);
   return (
     <Layout title='Listado de Pokemons'>
       <ul>
-        <li>Pokémon</li>
-        <li>Pokémon</li>
-        <li>Pokémon</li>
-        <li>Pokémon</li>
-        <li>Pokémon</li>
-        <li>Pokémon</li>
-        <li>Pokémon</li>
-        <li>Pokémon</li>
+        {
+          pokemons.map((pokemon) => 
+            <li key={`${id}-${pokemon.id}`} >{pokemon.name}</li> 
+          )
+        }
       </ul>
     </Layout>
   )
@@ -29,10 +34,20 @@ const Home: NextPage = (props) => {
 
 export const getStaticProps: GetStaticProps = async (ctx) => {
 
-  console.log('Hola Mundo');
+  const {data} = await pokeApi.get<PokemonListResponse>('/pokemon?limit=151');
+
+  const pokemons: SmallPokemon[] = data.results.map((pokemon, index) => ({
+    ...pokemon,
+    image: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${index + 1}.png`,
+    id: index + 1,
+    })
+  );
+
+  // https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/132.svg
+
   return {
     props: {
-      name: 'Fabian'
+      pokemons
     }
   }
 }
